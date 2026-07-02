@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Tasks — Campus Task Manager</title>
+  <meta name="description" content="Manage all your campus tasks, assignments, and exams. Search, filter, and prioritize your academic workload.">
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/tasks.css">
+</head>
+<body>
+
+  <!-- ======== App Shell ======== -->
+  <div class="app-shell">
+
+    <!-- Sidebar (built by app.js) -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+      <!-- Top Bar (built by app.js) -->
+      <header class="topbar" id="topbar"></header>
+
+      <!-- Page Content -->
+      <main class="page-content">
+
+        <div class="tasks-page-layout">
+          
+          <!-- Main Tasks Section -->
+          <div class="tasks-main">
+            
+            <!-- Toolbar for filters, search and sorting -->
+            <div class="task-toolbar">
+              
+              <!-- Filter Tabs (Status) -->
+              <div class="filter-tabs">
+                <button class="filter-tab active" data-status="">All</button>
+                <button class="filter-tab" data-status="Pending">Pending</button>
+                <button class="filter-tab" data-status="Completed">Completed</button>
+              </div>
+
+              <!-- Filter Dropdowns and Search -->
+              <div class="filter-selects">
+                <select id="priority-filter" class="filter-select">
+                  <option value="">All Priorities</option>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+
+                <select id="category-filter" class="filter-select">
+                  <option value="">All Categories</option>
+                  <option value="Assignment">Assignment</option>
+                  <option value="Exam">Exam</option>
+                  <option value="Project">Project</option>
+                  <option value="Personal">Personal</option>
+                </select>
+
+                <select id="sort-select" class="filter-select">
+                  <option value="dueDate_asc">Due Date (Soonest)</option>
+                  <option value="dueDate_desc">Due Date (Latest)</option>
+                  <option value="priority">Priority</option>
+                  <option value="title">Alphabetical</option>
+                  <option value="createdAt_desc">Recently Added</option>
+                </select>
+
+                <!-- Search Input for tasks page -->
+                <input type="text" id="task-search" class="quick-add-input" placeholder="Search in page..." style="max-width:200px; padding:7px 12px; font-size:var(--text-sm);">
+              </div>
+
+            </div>
+
+            <!-- Bulk Action Bar -->
+            <div class="bulk-bar" id="bulk-bar">
+              <span class="bulk-bar-info" id="bulk-info">0 tasks selected</span>
+              <div class="bulk-bar-actions">
+                <button class="btn btn-secondary" id="bulk-complete-btn" style="padding:6px 12px; font-size:var(--text-xs);">Mark Completed</button>
+                <button class="btn btn-danger" id="bulk-delete-btn" style="padding:6px 12px; font-size:var(--text-xs);">Delete Selected</button>
+              </div>
+            </div>
+
+            <!-- Tasks Count Summary -->
+            <div style="margin-bottom:var(--sp-3); display:flex; justify-content:space-between; align-items:center;">
+              <span id="result-count" style="font-size:var(--text-sm); font-weight:600; color:var(--text-secondary);">0 tasks</span>
+            </div>
+
+            <!-- List of Task Cards -->
+            <div class="tasks-list" id="tasks-list">
+              <div style="padding:var(--sp-6); text-align:center; color:var(--text-muted);">Loading tasks...</div>
+            </div>
+
+          </div>
+
+          <!-- Task Detail Side Panel -->
+          <aside class="task-detail-panel" id="task-detail-panel"></aside>
+
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ======== Add / Edit Task Modal ======== -->
+  <div class="modal-overlay hidden" id="task-modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Add New Task</h2>
+        <button class="modal-close" id="modal-close-btn" aria-label="Close modal">✕</button>
+      </div>
+      <form id="task-form" novalidate autocomplete="off">
+        <input type="hidden" id="modal-task-id" value="">
+        <div class="modal-body">
+
+          <!-- Title -->
+          <div class="form-group">
+            <label for="modal-title-input" class="form-label">Title <span class="required-star">*</span></label>
+            <input type="text" id="modal-title-input" class="form-input" placeholder="e.g. Submit Math Assignment" required maxlength="200">
+          </div>
+
+          <!-- Description -->
+          <div class="form-group">
+            <label for="modal-desc" class="form-label">Description</label>
+            <textarea id="modal-desc" class="form-textarea" rows="3" placeholder="Add notes or details..."></textarea>
+          </div>
+
+          <!-- Due Date & Priority Row -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--sp-4);">
+            <div class="form-group">
+              <label for="modal-due" class="form-label">Due Date <span class="required-star">*</span></label>
+              <input type="date" id="modal-due" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="modal-priority" class="form-label">Priority</label>
+              <select id="modal-priority" class="form-input">
+                <option value="Low">Low</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="High">High</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Category & Course Code Row -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--sp-4);">
+            <div class="form-group">
+              <label for="modal-category" class="form-label">Category</label>
+              <select id="modal-category" class="form-input">
+                <option value="Assignment" selected>Assignment</option>
+                <option value="Exam">Exam</option>
+                <option value="Project">Project</option>
+                <option value="Personal">Personal</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="modal-course" class="form-label">Course Code</label>
+              <input type="text" id="modal-course" class="form-input" placeholder="e.g. CS101">
+            </div>
+          </div>
+
+          <!-- Reminder -->
+          <div class="form-group">
+            <div style="display:flex; align-items:center; gap:var(--sp-2);">
+              <input type="checkbox" id="modal-reminder" style="width:16px;height:16px;accent-color:var(--primary);">
+              <label for="modal-reminder" class="form-label" style="margin-bottom:0;">Enable Reminder</label>
+            </div>
+            <div id="reminder-options" style="display:none; margin-top:var(--sp-2);">
+              <select id="modal-reminder-option" class="form-input">
+                <option value="none">Select timing</option>
+                <option value="At time of due">At time of due</option>
+                <option value="1 hour before">1 hour before</option>
+                <option value="1 day before">1 day before</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="modal-cancel-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======== Delete Confirmation Modal ======== -->
+  <div class="modal-overlay hidden" id="delete-modal-overlay">
+    <div class="modal" style="max-width:420px;">
+      <div class="modal-header">
+        <h2 class="modal-title">Delete Task</h2>
+        <button class="modal-close" onclick="closeDeleteModal()" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body" style="text-align:center;">
+        <div style="font-size:2.5rem;margin-bottom:var(--sp-4);">🗑️</div>
+        <p style="font-size:var(--text-base);color:var(--text-primary);margin-bottom:var(--sp-2);">Are you sure you want to delete</p>
+        <p style="font-weight:700;color:var(--text-primary);margin-bottom:var(--sp-4);" id="delete-task-title"></p>
+        <p style="font-size:var(--text-sm);color:var(--text-muted);">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer" style="justify-content:center;">
+        <button type="button" class="btn btn-secondary" id="delete-cancel-btn">Cancel</button>
+        <button type="button" class="btn btn-danger" id="delete-confirm-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/reminders.js"></script>
+  <script src="js/tasks.js"></script>
+</body>
+</html>

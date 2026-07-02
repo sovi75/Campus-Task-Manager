@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — Campus Task Manager</title>
+  <meta name="description" content="Create a Campus Task Manager account to organize your assignments, exams, and academic projects.">
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+  <div class="auth-wrapper">
+    <div class="auth-card">
+
+      <!-- Header -->
+      <div class="auth-header">
+        <div class="auth-logo-wrap">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9
+                     2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        </div>
+        <span class="auth-app-name">Campus Task Manager</span>
+        <h1 class="auth-title">Create your account</h1>
+        <p class="auth-subtitle">Stay on top of assignments, exams, and projects</p>
+      </div>
+
+      <!-- Register Form -->
+      <form class="auth-form" id="register-form" novalidate autocomplete="on">
+
+        <div class="form-group">
+          <label for="name" class="form-label">
+            Full Name <span class="required-star">*</span>
+          </label>
+          <input
+            type="text"
+            id="name"
+            class="form-input"
+            placeholder="e.g. Alex Mercer"
+            autocomplete="name"
+            required
+          >
+          <span class="form-error-msg" id="name-error" role="alert"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="form-label">
+            Email Address <span class="required-star">*</span>
+          </label>
+          <input
+            type="email"
+            id="email"
+            class="form-input"
+            placeholder="alex@university.edu"
+            autocomplete="email"
+            required
+          >
+          <span class="form-error-msg" id="email-error" role="alert"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">
+            Password <span class="required-star">*</span>
+          </label>
+          <input
+            type="password"
+            id="password"
+            class="form-input"
+            placeholder="Min. 6 characters"
+            autocomplete="new-password"
+            required
+          >
+          <span class="form-error-msg" id="password-error" role="alert"></span>
+        </div>
+
+        <button type="submit" id="register-btn" class="btn btn-primary btn-auth">
+          Sign Up
+        </button>
+      </form>
+
+      <!-- Footer -->
+      <div class="auth-footer">
+        Already have an account? <a href="login.html">Log in</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — Campus Task Manager</title>
+  <meta name="description" content="Sign in to Campus Task Manager to track your assignments, exams, and academic deadlines.">
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+  <div class="auth-wrapper">
+    <div class="auth-card">
+
+      <!-- Header -->
+      <div class="auth-header">
+        <div class="auth-logo-wrap">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9
+                     2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        </div>
+        <span class="auth-app-name">Campus Task Manager</span>
+        <h1 class="auth-title">Welcome back!</h1>
+        <p class="auth-subtitle">Log in to access your tasks and deadlines</p>
+      </div>
+
+      <!-- Login Form -->
+      <form class="auth-form" id="login-form" novalidate autocomplete="on">
+
+        <div class="form-group">
+          <label for="email" class="form-label">
+            Email Address <span class="required-star">*</span>
+          </label>
+          <input
+            type="email"
+            id="email"
+            class="form-input"
+            placeholder="alex@university.edu"
+            autocomplete="email"
+            required
+          >
+          <span class="form-error-msg" id="email-error" role="alert"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">
+            Password <span class="required-star">*</span>
+          </label>
+          <input
+            type="password"
+            id="password"
+            class="form-input"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+          >
+          <span class="form-error-msg" id="password-error" role="alert"></span>
+        </div>
+
+        <button type="submit" id="login-btn" class="btn btn-primary btn-auth">
+          Sign In
+        </button>
+      </form>
+
+      <!-- Footer -->
+      <div class="auth-footer">
+        New student? <a href="register.html">Create an account</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

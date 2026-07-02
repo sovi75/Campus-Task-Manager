@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendar Sync — Campus Task Manager</title>
+  <meta name="description" content="View your syllabus schedules, assignment timelines, and exam dates on an interactive calendar grid.">
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    /* Styling Calendar Page */
+    .calendar-container {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: var(--sp-6);
+      align-items: start;
+    }
+
+    .calendar-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: var(--sp-6);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calendar-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--sp-4);
+    }
+
+    .calendar-nav-btn {
+      background: none;
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      font-size: var(--text-md);
+      font-weight: 700;
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      color: var(--text-primary);
+      transition: var(--transition);
+    }
+
+    .calendar-nav-btn:hover {
+      background: var(--bg-subtle);
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      border-top: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      overflow: hidden;
+    }
+
+    .calendar-weekday {
+      background: var(--bg-subtle);
+      text-align: center;
+      font-weight: 700;
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+      padding: 10px 0;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .calendar-day {
+      min-height: 90px;
+      padding: var(--sp-2);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-surface);
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .calendar-day:hover {
+      background: var(--bg-subtle);
+    }
+
+    .calendar-day.other-month {
+      background: var(--bg-subtle);
+      opacity: 0.55;
+    }
+
+    .calendar-day.selected {
+      background: var(--primary-light);
+      border-color: var(--primary-ring);
+    }
+
+    .calendar-day.today {
+      background: hsl(217, 91%, 97%);
+    }
+
+    .calendar-day-number {
+      font-weight: 600;
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .calendar-day.today .calendar-day-number {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .calendar-day-tasks {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      overflow-y: auto;
+      max-height: 60px;
+    }
+
+    .calendar-task-dot {
+      font-size: 10px;
+      padding: 1px 4px;
+      border-radius: var(--r-xs);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .calendar-task-dot.high { background: var(--priority-high-bg); color: var(--priority-high); }
+    .calendar-task-dot.medium { background: var(--priority-medium-bg); color: hsl(30,80%,35%); }
+    .calendar-task-dot.low { background: var(--priority-low-bg); color: var(--priority-low); }
+    .calendar-task-dot.completed { background: var(--color-success-light); color: var(--color-success); text-decoration: line-through; }
+
+    .sync-status-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: var(--sp-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+    }
+
+    /* Sync Simulator Modal overlay styling */
+    .sync-progress-bar-wrap {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-page);
+      border-radius: var(--r-full);
+      overflow: hidden;
+      margin: var(--sp-4) 0;
+    }
+
+    .sync-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: var(--r-full);
+      transition: width 0.1s linear;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======== App Shell ======== -->
+  <div class="app-shell">
+
+    <!-- Sidebar (built by app.js) -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+      <!-- Top Bar (built by app.js) -->
+      <header class="topbar" id="topbar"></header>
+
+      <!-- Page Content -->
+      <main class="page-content">
+
+        <div class="calendar-container">
+          
+          <!-- Calendar Grid Card -->
+          <div class="calendar-card">
+            
+            <div class="calendar-header-row">
+              <div style="display: flex; gap: var(--sp-2); align-items: center;">
+                <button class="calendar-nav-btn" id="cal-prev-btn">◀</button>
+                <h2 id="calendar-month-year" style="font-size: var(--text-lg); font-weight: 700; min-width: 140px; text-align: center;">Month Year</h2>
+                <button class="calendar-nav-btn" id="cal-next-btn">▶</button>
+              </div>
+              <button class="btn btn-secondary" id="cal-today-btn">Today</button>
+            </div>
+
+            <div class="calendar-grid">
+              <div class="calendar-weekday">Sun</div>
+              <div class="calendar-weekday">Mon</div>
+              <div class="calendar-weekday">Tue</div>
+              <div class="calendar-weekday">Wed</div>
+              <div class="calendar-weekday">Thu</div>
+              <div class="calendar-weekday">Fri</div>
+              <div class="calendar-weekday">Sat</div>
+              
+              <!-- Days will be inserted dynamically by JS -->
+              <div class="calendar-grid-days-container" id="calendar-days" style="display: contents;"></div>
+            </div>
+
+          </div>
+
+          <!-- Sidebar Sync & Tasks on Day info -->
+          <div style="display: flex; flex-direction: column; gap: var(--sp-6);">
+            
+            <!-- Sync Card -->
+            <div class="sync-status-card">
+              <h3 style="font-size: var(--text-md); font-weight: 700;">📅 Calendar Sync</h3>
+              <div style="font-size: var(--text-xs); color: var(--text-muted);">
+                Integrate syllabus events with Google Calendar, iCal, or Outlook.
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <span style="font-size: var(--text-xs); font-weight: 600; color: var(--text-secondary);">Last synced:</span>
+                <strong id="sync-last-time" style="font-size: var(--text-sm);">Never</strong>
+              </div>
+              <button class="btn btn-primary" id="sync-start-btn" style="width: 100%;">Sync Calendar Now</button>
+            </div>
+
+            <!-- Tasks on Selected Day -->
+            <div class="sync-status-card">
+              <h3 id="selected-day-title" style="font-size: var(--text-sm); font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 8px;">Tasks Due</h3>
+              <div class="tasks-list" id="selected-day-tasks" style="max-height: 320px; overflow-y: auto;">
+                <div style="font-size: var(--text-xs); color: var(--text-muted); text-align: center; padding: var(--sp-4);">Select a day on the calendar to view deadlines.</div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ======== Sync Progress Modal Simulator ======== -->
+  <div class="modal-overlay hidden" id="sync-modal-overlay">
+    <div class="modal" style="max-width: 400px; text-align: center;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="sync-modal-title">Syncing Calendar</h2>
+      </div>
+      <div class="modal-body" style="padding: var(--sp-6);">
+        <div id="sync-icon" style="font-size: 3rem; animation: spin 2s linear infinite; display: inline-block; margin-bottom: var(--sp-2);">🔄</div>
+        <p id="sync-step-label" style="font-weight: 600; font-size: var(--text-sm); margin-bottom: var(--sp-2);">Connecting to secure server...</p>
+        <p id="sync-detail-label" style="font-size: var(--text-xs); color: var(--text-muted);">Checking credentials</p>
+        
+        <div class="sync-progress-bar-wrap">
+          <div class="sync-progress-fill" id="sync-progress-fill"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== Add / Edit Task Modal (Required by topbar) ======== -->
+  <div class="modal-overlay hidden" id="task-modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Add New Task</h2>
+        <button class="modal-close" id="modal-close-btn" aria-label="Close modal">✕</button>
+      </div>
+      <form id="task-form" novalidate autocomplete="off">
+        <input type="hidden" id="modal-task-id" value="">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="modal-title-input" class="form-label">Title <span class="required-star">*</span></label>
+            <input type="text" id="modal-title-input" class="form-input" placeholder="e.g. Exam Study" required>
+          </div>
+          <div class="form-group">
+            <label for="modal-due" class="form-label">Due Date <span class="required-star">*</span></label>
+            <input type="date" id="modal-due" class="form-input" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="modal-cancel-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/reminders.js"></script>
+  <script src="js/calendar.js"></script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+/* ============================================================
+   auth.css — Login & Register page styles
+   Depends on: index.css (loaded first)
+   ============================================================ */
+
+/* ---- Page Wrapper ---- */
+.auth-wrapper {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: var(--sp-6);
+  background:
+    radial-gradient(ellipse at 20% 50%, hsla(217, 91%, 60%, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 20%, hsla(262, 83%, 65%, 0.10) 0%, transparent 50%),
+    var(--bg-page);
+}
+
+/* ---- Card ---- */
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: var(--sp-10) var(--sp-10);
+  box-shadow: var(--shadow-xl);
+  animation: authCardIn 0.5s var(--ease-spring) both;
+}
+
+@keyframes authCardIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* ---- Header ---- */
+.auth-header {
+  text-align: center;
+  margin-bottom: var(--sp-8);
+}
+
+.auth-logo-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  border-radius: var(--r-lg);
+  margin-bottom: var(--sp-4);
+  box-shadow: 0 8px 24px hsla(217, 91%, 60%, 0.35);
+}
+
+.auth-logo-wrap svg {
+  width: 30px;
+  height: 30px;
+  fill: white;
+}
+
+.auth-app-name {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: var(--sp-1);
+}
+
+.auth-title {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--sp-1);
+}
+
+.auth-subtitle {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+/* ---- Form ---- */
+.auth-form {
+  /* spacing handled by form-group in index.css */
+}
+
+.auth-form .form-input {
+  padding: 11px 14px;
+  font-size: var(--text-base);
+}
+
+/* Full-width submit button */
+.btn-auth {
+  width: 100%;
+  padding: 12px;
+  font-size: var(--text-md);
+  border-radius: var(--r-sm);
+  margin-top: var(--sp-2);
+  position: relative;
+}
+
+/* ---- Footer / Switch link ---- */
+.auth-footer {
+  text-align: center;
+  margin-top: var(--sp-6);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.auth-footer a {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.auth-footer a:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+/* ---- Input Icons (optional decorative) ---- */
+.input-wrapper {
+  position: relative;
+}
+
+.input-wrapper .input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+  font-size: 1rem;
+}
+
+.input-wrapper .form-input {
+  padding-left: 40px;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: var(--sp-8) var(--sp-5);
+    border-radius: var(--r-lg);
+  }
+}
